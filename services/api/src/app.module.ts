@@ -7,9 +7,10 @@ import { FeatureFlagsModule } from "./feature-flags/feature-flags.module";
 import { AuditModule } from "./audit/audit.module";
 import { AdminAuthModule } from "./admin-auth/admin-auth.module";
 import { AuthCoreModule } from "./auth-core/auth-core.module";
+import { CountriesModule } from "./countries/countries.module";
 
 @Module({
-  imports: [ConfigModule, PrismaModule, HealthModule, FeatureFlagsModule, AuditModule, AdminAuthModule, AuthCoreModule],
+  imports: [ConfigModule, PrismaModule, HealthModule, FeatureFlagsModule, AuditModule, AdminAuthModule, AuthCoreModule, CountriesModule],
   controllers: [],
   providers: [AppService],
 })

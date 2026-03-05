@@ -51,6 +51,8 @@ async function seedRbac(prisma: PrismaClient, adminEmail?: string) {
     "FEATURE_FLAGS_READ",
     "AUDIT_READ",
     "COUNTRY_MANAGE",
+    "COUNTRY_READ",
+    "COUNTRY_WRITE",
     "USERS_MANAGE",
   ];
 

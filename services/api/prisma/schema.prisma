@@ -13,7 +13,36 @@ model Country {
   currency String // ex: GNF
   isActive Boolean @default(true)
 
-  flags FeatureFlag[]
+  timezone      String  @default("Africa/Conakry")
+  defaultLocale String  @default("fr-GN")
+  callingCode   String? // ex: +224
+
+  flags    FeatureFlag[]
+  settings CountrySettings?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model CountrySettings {
+  id        String @id @default(cuid())
+  countryId String @unique
+
+  // Map & Geo
+  mapProvider       String  @default("mapbox") // "mapbox" | "osm"
+  mapboxPublicToken String?
+  mapStyleUrl       String?
+
+  // Business defaults (V1)
+  defaultCommissionBps Int     @default(1500) // 15%
+  vatEnabled           Boolean @default(false)
+  vatRateBps           Int     @default(0)
+
+  // Support
+  supportPhone String?
+  supportEmail String?
+
+  country Country @relation(fields: [countryId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -46,6 +75,11 @@ model FeatureFlag {
 
 enum AuditAction {
   FEATURE_FLAG_SET
+  COUNTRY_CREATED
+  COUNTRY_UPDATED
+  COUNTRY_ACTIVATED
+  COUNTRY_DEACTIVATED
+  COUNTRY_SETTINGS_UPDATED
 }
 
 model AuditLog {
