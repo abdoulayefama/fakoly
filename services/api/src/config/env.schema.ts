@@ -12,6 +12,8 @@ export const envSchema = z.object({
 
   OTP_LENGTH: z.coerce.number().int().min(4).max(8).default(6),
   OTP_TTL_SECONDS: z.coerce.number().int().min(60).max(3600).default(300),
+
+  INTERNAL_API_KEY: z.string().min(24),
 });
 
 export type Env = z.infer<typeof envSchema>;

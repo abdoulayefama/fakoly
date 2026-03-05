@@ -43,3 +43,25 @@ model FeatureFlag {
   @@unique([countryId, key])
   @@index([countryId])
 }
+
+enum AuditAction {
+  FEATURE_FLAG_SET
+}
+
+model AuditLog {
+  id        String      @id @default(cuid())
+  action    AuditAction
+  actor     String      // ex: "internal_api" puis "admin:<id>"
+  countryId String?
+  entity    String      // ex: "FeatureFlag"
+  entityId  String?
+  before    Json?
+  after     Json?
+  ip        String?
+  userAgent String?
+  createdAt DateTime    @default(now())
+
+  @@index([action])
+  @@index([countryId])
+  @@index([createdAt])
+}
