@@ -5,9 +5,9 @@ import { AdminAuthService } from "./admin-auth.service";
 import { AdminJwtGuard } from "./guards/admin-jwt.guard";
 
 @Module({
-  imports: [JwtModule.register({})],
+  imports: [],
   controllers: [AdminAuthController],
   providers: [AdminAuthService, AdminJwtGuard],
-  exports: [AdminJwtGuard],
+  exports: [],
 })
 export class AdminAuthModule {}
