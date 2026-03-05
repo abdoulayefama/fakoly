@@ -7,13 +7,13 @@ datasource db {
 }
 
 model Country {
-  id        String   @id @default(cuid())
-  code      String   @unique // ex: GN
-  name      String
-  currency  String   // ex: GNF
-  isActive  Boolean  @default(true)
+  id       String  @id @default(cuid())
+  code     String  @unique // ex: GN
+  name     String
+  currency String // ex: GNF
+  isActive Boolean @default(true)
 
-  flags     FeatureFlag[]
+  flags FeatureFlag[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -35,10 +35,10 @@ model FeatureFlag {
   key       FeatureKey
   enabled   Boolean    @default(false)
 
-  country   Country    @relation(fields: [countryId], references: [id], onDelete: Cascade)
+  country Country @relation(fields: [countryId], references: [id], onDelete: Cascade)
 
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@unique([countryId, key])
   @@index([countryId])
@@ -51,9 +51,9 @@ enum AuditAction {
 model AuditLog {
   id        String      @id @default(cuid())
   action    AuditAction
-  actor     String      // ex: "internal_api" puis "admin:<id>"
+  actor     String // ex: "internal_api" puis "admin:<id>"
   countryId String?
-  entity    String      // ex: "FeatureFlag"
+  entity    String // ex: "FeatureFlag"
   entityId  String?
   before    Json?
   after     Json?
@@ -64,4 +64,81 @@ model AuditLog {
   @@index([action])
   @@index([countryId])
   @@index([createdAt])
+}
+
+model AdminUser {
+  id           String  @id @default(cuid())
+  email        String? @unique
+  phone        String? @unique
+  passwordHash String
+  fullName     String?
+  isActive     Boolean @default(true)
+
+  roles    AdminUserRole[]
+  sessions AdminSession[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model AdminRole {
+  id       String  @id @default(cuid())
+  code     String  @unique // ex: SUPER_ADMIN, COUNTRY_ADMIN, SUPPORT
+  name     String
+  isActive Boolean @default(true)
+
+  users AdminUserRole[]
+  perms AdminRolePermission[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model AdminPermission {
+  id        String                @id @default(cuid())
+  code      String                @unique // ex: FEATURE_FLAGS_WRITE, AUDIT_READ
+  name      String
+  createdAt DateTime              @default(now())
+  rolePerms AdminRolePermission[]
+}
+
+model AdminUserRole {
+  id     String @id @default(cuid())
+  userId String
+  roleId String
+
+  user AdminUser @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role AdminRole @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, roleId])
+  @@index([userId])
+  @@index([roleId])
+}
+
+model AdminRolePermission {
+  id           String @id @default(cuid())
+  roleId       String
+  permissionId String
+
+  role       AdminRole       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission AdminPermission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@unique([roleId, permissionId])
+  @@index([roleId])
+  @@index([permissionId])
+}
+
+model AdminSession {
+  id          String    @id @default(cuid())
+  userId      String
+  refreshHash String
+  revokedAt   DateTime?
+  expiresAt   DateTime
+
+  user AdminUser @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([expiresAt])
 }

@@ -14,6 +14,13 @@ export const envSchema = z.object({
   OTP_TTL_SECONDS: z.coerce.number().int().min(60).max(3600).default(300),
 
   INTERNAL_API_KEY: z.string().min(24),
+
+  ADMIN_ACCESS_TTL_SECONDS: z.coerce.number().int().min(60).max(86400).default(900),
+  ADMIN_REFRESH_TTL_DAYS: z.coerce.number().int().min(1).max(365).default(30),
+
+  BOOTSTRAP_ADMIN_EMAIL: z.string().email().optional(),
+  BOOTSTRAP_ADMIN_PASSWORD: z.string().min(10).optional(),
+
 });
 
 export type Env = z.infer<typeof envSchema>;

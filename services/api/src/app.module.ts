@@ -5,9 +5,10 @@ import { PrismaModule } from "./prisma/prisma.module";
 import { HealthModule } from "./health/health.module";
 import { FeatureFlagsModule } from "./feature-flags/feature-flags.module";
 import { AuditModule } from "./audit/audit.module";
+import { AdminAuthModule } from "./admin-auth/admin-auth.module";
 
 @Module({
-  imports: [ConfigModule, PrismaModule, HealthModule, FeatureFlagsModule, AuditModule],
+  imports: [ConfigModule, PrismaModule, HealthModule, FeatureFlagsModule, AuditModule, AdminAuthModule],
   controllers: [],
   providers: [AppService],
 })

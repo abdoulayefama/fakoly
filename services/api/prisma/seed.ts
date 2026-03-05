@@ -2,6 +2,7 @@
 import { PrismaClient, FeatureKey } from "@prisma/client";
 import { Pool } from "pg";
 import { PrismaPg } from "@prisma/adapter-pg";
+import * as bcrypt from "bcrypt";
 
 function createPrisma() {
   const url = process.env.DATABASE_URL;
@@ -20,12 +21,14 @@ async function main() {
   const { prisma, pool } = createPrisma();
 
   try {
+    // 1) Country GN
     const country = await prisma.country.upsert({
       where: { code: "GN" },
       update: { isActive: true, name: "Guinée", currency: "GNF" },
       create: { code: "GN", name: "Guinée", currency: "GNF", isActive: true },
     });
 
+    // 2) Feature flags defaults (GN)
     const keys: FeatureKey[] = [
       FeatureKey.MOBILITY_MOTO,
       FeatureKey.MOBILITY_CAR,
@@ -45,8 +48,23 @@ async function main() {
     }
 
     console.log("Seed OK:", country.code);
+
+    // 3) Bootstrap admin (optionnel)
+    const email = process.env.BOOTSTRAP_ADMIN_EMAIL?.toLowerCase();
+    const password = process.env.BOOTSTRAP_ADMIN_PASSWORD;
+
+    if (email && password) {
+      const hash = await bcrypt.hash(password, 10);
+
+      const admin = await prisma.adminUser.upsert({
+        where: { email },
+        update: { isActive: true },
+        create: { email, passwordHash: hash, fullName: "Super Admin" },
+      });
+
+      console.log("Bootstrap Admin OK:", admin.email);
+    }
   } finally {
-    // important: fermer Prisma + pool PG
     await prisma.$disconnect();
     await pool.end();
   }
