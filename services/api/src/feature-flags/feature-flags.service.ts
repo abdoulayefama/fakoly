@@ -23,7 +23,7 @@ export class FeatureFlagsService {
     countryCode: string,
     key: FeatureKey,
     enabled: boolean,
-    meta?: { ip?: string; userAgent?: string },
+    meta?: { ip?: string; userAgent?: string; actor?: string },
   ) {
     const country = await this.prisma.country.findUnique({ where: { code: countryCode } });
     if (!country) throw new NotFoundException("Country not found");
@@ -40,7 +40,7 @@ export class FeatureFlagsService {
 
     await this.audit.log({
       action: AuditAction.FEATURE_FLAG_SET,
-      actor: "internal_api",
+      actor: meta?.actor ?? "internal_api",
       countryId: country.id,
       entity: "FeatureFlag",
       entityId: after.id,

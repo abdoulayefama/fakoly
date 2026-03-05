@@ -48,6 +48,7 @@ async function seedCountryAndFlags(prisma: PrismaClient) {
 async function seedRbac(prisma: PrismaClient, adminEmail?: string) {
   const perms = [
     "FEATURE_FLAGS_WRITE",
+    "FEATURE_FLAGS_READ",
     "AUDIT_READ",
     "COUNTRY_MANAGE",
     "USERS_MANAGE",
