@@ -1,0 +1,28 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:16
+    container_name: fakoly-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: fakoly
+      POSTGRES_USER: fakoly
+      POSTGRES_PASSWORD: fakoly_password_change_me
+    ports:
+      - "5432:5432"
+    volumes:
+      - fakoly_pg_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7
+    container_name: fakoly-redis
+    restart: unless-stopped
+    ports:
+      - "6380:6379"
+    volumes:
+      - fakoly_redis_data:/data
+
+volumes:
+  fakoly_pg_data:
+  fakoly_redis_data:
