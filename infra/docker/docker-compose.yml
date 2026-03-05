@@ -10,7 +10,7 @@ services:
       POSTGRES_USER: fakoly
       POSTGRES_PASSWORD: fakoly_password_change_me
     ports:
-      - "5432:5432"
+      - "5434:5432"
     volumes:
       - fakoly_pg_data:/var/lib/postgresql/data
 
