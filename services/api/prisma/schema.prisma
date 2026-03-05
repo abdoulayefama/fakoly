@@ -5,3 +5,41 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+model Country {
+  id        String   @id @default(cuid())
+  code      String   @unique // ex: GN
+  name      String
+  currency  String   // ex: GNF
+  isActive  Boolean  @default(true)
+
+  flags     FeatureFlag[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum FeatureKey {
+  MOBILITY_MOTO
+  MOBILITY_CAR
+  MOBILITY_TRICYCLE
+  DELIVERY_PARCEL
+  FOOD
+  MARKETPLACE
+  CARPOOL
+}
+
+model FeatureFlag {
+  id        String     @id @default(cuid())
+  countryId String
+  key       FeatureKey
+  enabled   Boolean    @default(false)
+
+  country   Country    @relation(fields: [countryId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  @@unique([countryId, key])
+  @@index([countryId])
+}
